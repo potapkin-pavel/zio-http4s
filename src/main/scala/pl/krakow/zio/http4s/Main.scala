@@ -9,7 +9,7 @@ import zio._
 import zio.interop.catz._
 import zio.interop.catz.implicits._
 
-object Main extends scala.App {
+object Main extends zio.App {
   val server: ZIO[zio.ZEnv, Throwable, Unit] =
     ZIO.runtime[ZEnv]
       .flatMap {
@@ -20,10 +20,11 @@ object Main extends scala.App {
             .serve
             .compile
             .drain
+            .forever
       }
 
   def run(args: List[String]): URIO[zio.ZEnv, ExitCode] =
-    server.fold(_ => ExitCode.success, _ => ExitCode.failure)
+    server.fold(_ => ExitCode(0), _ => ExitCode(1))
 }
 
 object Hello1Service {
